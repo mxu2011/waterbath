@@ -356,33 +356,40 @@ void Tune_Sp()
 {
    //lcd.setBacklight(TEAL);
    lcd.print(F("Set Temperature:"));
+   Serial.println("Entering Tune Set point");
    uint8_t buttons = 0;
    while(true)
    {
       buttons = ReadButtons();
-
+      
+      /*
+      Serial.print("buttons= ");
+      Serial.println(buttons);
+      */
+      
       float increment = 0.1;
-      if (buttons & BUTTON_SHIFT)
+      if (buttons == BUTTON_SHIFT)
       {
         increment *= 10;
       }
-      if (buttons & BUTTON_LEFT)
+      if (buttons == BUTTON_LEFT)
       {
          opState = RUN;
          return;
       }
-      if (buttons & BUTTON_RIGHT)
+      if (buttons == BUTTON_RIGHT)
       {
          opState = TUNE_P;
          return;
       }
-      if (buttons & BUTTON_UP)
+      if (buttons == BUTTON_UP)
       {
          Setpoint += increment;
          delay(200);
       }
-      if (buttons & BUTTON_DOWN)
+      if (buttons == BUTTON_DOWN)
       {
+         Serial.println("reduce setpoint");
          Setpoint -= increment;
          delay(200);
       }
