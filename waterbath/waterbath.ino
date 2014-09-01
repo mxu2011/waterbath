@@ -136,6 +136,7 @@ DeviceAddress tempSensor;
 void setup()
 {
    Serial.begin(9600);
+   
 
    // Initialize Relay Control:
 
@@ -150,6 +151,8 @@ void setup()
    pinMode(ONE_WIRE_PWR, OUTPUT);
    digitalWrite(ONE_WIRE_PWR, HIGH);
 
+
+
    // Initialize LCD DiSplay 
 
    lcd.begin(16, 2);
@@ -160,6 +163,7 @@ void setup()
    lcd.setCursor(0, 1);
    lcd.print(F("   Sous Vide!"));
 
+/**
    // Start up the DS18B20 One Wire Temperature Sensor
 
    sensors.begin();
@@ -173,6 +177,8 @@ void setup()
 
    delay(3000);  // Splash screen
 
+
+
    // Initialize the PID and related variables
    LoadParameters();
    myPID.SetTunings(Kp,Ki,Kd);
@@ -180,12 +186,14 @@ void setup()
    myPID.SetSampleTime(1000);
    myPID.SetOutputLimits(0, WindowSize);
 
-  // Run timer2 interrupt every 15 ms 
-  TCCR2A = 0;
-  TCCR2B = 1<<CS22 | 1<<CS21 | 1<<CS20;
+  // Run timer1 interrupt every 15 ms 
+  TCCR1A = 0;
+  TCCR1B = 1<<CS12 | 1<<CS11 | 1<<CS10;
 
-  //Timer2 Overflow Interrupt Enable
-  TIMSK2 |= 1<<TOIE2;
+  //Timer1 Overflow Interrupt Enable
+  TIMSK1 |= 1<<TOIE1;
+  
+*/  
 }
 
 // ************************************************
@@ -210,6 +218,12 @@ SIGNAL(TIMER2_OVF_vect)
 // ************************************************
 void loop()
 {
+  
+   Serial.println("hello pid");
+   delay(1000);
+   /**
+   
+   
    // wait for button release before changing state
    while(ReadButtons() != 0) {}
 
@@ -236,6 +250,8 @@ void loop()
       TuneD();
       break;
    }
+   
+*/   
 }
 
 // ************************************************
