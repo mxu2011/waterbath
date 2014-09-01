@@ -189,38 +189,31 @@ void setup()
 
    myPID.SetSampleTime(1000);
    myPID.SetOutputLimits(0, WindowSize);
-
-/**
-
-  // Run timer1 interrupt every 15 ms 
-  TCCR1A = 0;
-  TCCR1B = 1<<CS12 | 1<<CS11 | 1<<CS10;
-
-  //Timer1 Overflow Interrupt Enable
-  TIMSK1 |= 1<<TOIE1;
- **/
- 
-  noInterrupts();           // disable all interrupts
-  
+   
+   
+  // Run timer1 interrupt every 15 ms (roughly 67Hz) 
+  noInterrupts();           // disable all interrupts  
   
   TCCR1A = 0;
   TCCR1B = 0;
   TCNT1  = 0;
 
-  OCR1A = 31250;            // compare match register 16MHz/256/2Hz
+// check the following link how to calculate OCR1A
+// http://www.instructables.com/id/Arduino-Timer-Interrupts/step1/Prescalers-and-the-Compare-Match-Register/
+
+  OCR1A = 932;            // compare match register 16MHz/256/67Hz
   TCCR1B |= (1 << WGM12);   // CTC mode
   TCCR1B |= (1 << CS12);    // 256 prescaler 
   TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
+  
   interrupts();             // enable all interrupts
-  
-  
-  
 }
 
 
 ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
 {
-  Serial.println("hello int");
+  Serial.print("millis in timer1 int: ");
+  Serial.println(millis());
 }
 
 // ************************************************
