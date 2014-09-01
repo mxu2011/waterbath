@@ -597,9 +597,10 @@ void Run()
 
       buttons = ReadButtons();
       if ((buttons == BUTTON_SHIFT) 
-         && (buttons == BUTTON_RIGHT) 
+         //&& (buttons == BUTTON_RIGHT) 
          && (abs(Input - Setpoint) < 0.5))  // Should be at steady-state
       {
+         Serial.println("Entering auto tune");
          StartAutoTune();
       }
       else if (buttons == BUTTON_RIGHT)
