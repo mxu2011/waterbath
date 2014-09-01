@@ -198,15 +198,39 @@ void setup()
 
   //Timer1 Overflow Interrupt Enable
   TIMSK1 |= 1<<TOIE1;
-**/
+ **/
  
+  noInterrupts();           // disable all interrupts
+  
+  
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCNT1  = 0;
+
+  OCR1A = 31250;            // compare match register 16MHz/256/2Hz
+  TCCR1B |= (1 << WGM12);   // CTC mode
+  TCCR1B |= (1 << CS12);    // 256 prescaler 
+  TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
+  interrupts();             // enable all interrupts
+  
+  
+  
+}
+
+
+ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
+{
+  Serial.println("hello int");
 }
 
 // ************************************************
 // Timer Interrupt Handler
 // ************************************************
-SIGNAL(TIMER2_OVF_vect) 
+SIGNAL(TIMER1_OVF_vect) 
 {
+  Serial.println("hello int");
+  return;
+  
   if (opState == OFF)
   {
     digitalWrite(RelayPin, LOW);  // make sure relay is off
@@ -234,6 +258,11 @@ void printStatus()
   parameters += String("Ki=")+String(buf);
      
   Serial.println(parameters);  
+  
+  sensors.requestTemperatures();
+  delay(1000);
+  Serial.print("The temperature is: ");
+  Serial.println(sensors.getTempCByIndex(0));
 }
 
 // ************************************************
@@ -244,8 +273,6 @@ void printStatus()
 void loop()
 {
    printStatus();
-   Serial.println("hello pid");
-   delay(1000);
    
   /* 
    
