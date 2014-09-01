@@ -358,19 +358,22 @@ void Tune_Sp()
    lcd.print(F("Set Temperature:"));
    Serial.println("Entering Tune Set point");
    uint8_t buttons = 0;
+
    while(true)
    {
       buttons = ReadButtons();
       
+      float increment = 0.1; 
       /*
       Serial.print("buttons= ");
       Serial.println(buttons);
       */
-      
-      float increment = 0.1;
       if (buttons == BUTTON_SHIFT)
       {
+        Serial.println("button shift is pressed");
         increment *= 10;
+        Serial.print("increment= ");
+        Serial.println(increment);
       }
       if (buttons == BUTTON_LEFT)
       {
@@ -391,6 +394,8 @@ void Tune_Sp()
       {
          Serial.println("reduce setpoint");
          Setpoint -= increment;
+         Serial.print("increment= ");
+         Serial.println(increment);
          delay(200);
       }
     
@@ -698,7 +703,7 @@ void DriveOutput()
   }
   else
   {
-     Serial.println("Shut off the heater");
+     //Serial.println("Shut off the heater");
      digitalWrite(RelayPin,LOW);
   }
 }
@@ -811,9 +816,9 @@ void LoadParameters()
    Kd = EEPROM_readDouble(KdAddress);
    
    // Use defaults if EEPROM values are invalid
-   if (isnan(Setpoint))
+   if (isnan(Setpoint) || Setpoint > 40 || Setpoint < 0)
    {
-     Setpoint = 60;
+     Setpoint = 20;
    }
    if (isnan(Kp))
    {
