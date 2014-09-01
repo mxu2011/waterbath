@@ -610,8 +610,8 @@ void Run()
       
       float pct = map(Output, 0, WindowSize, 0, 1000);
       lcd.setCursor(10,1);
-      lcd.print(F("      "));
-      lcd.setCursor(10,1);
+      //lcd.print(F("      "));
+      lcd.setCursor(9,1);
       lcd.print(pct/10);
       //lcd.print(Output);
       lcd.print("%");
@@ -659,6 +659,7 @@ void DoControl()
   {
      if (aTune.Runtime()) // returns 'true' when done
      {
+        Serial.println("finish auto tune.");
         FinishAutoTune();
      }
   }
