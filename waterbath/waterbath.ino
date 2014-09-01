@@ -29,13 +29,11 @@
 // ************************************************
 
 // Output Relay
-#define RelayPin 7
+#define RelayPin 13
 
 // One-Wire Temperature Sensor
-// (Use GPIO pins for power/ground to simplify the wiring)
 #define ONE_WIRE_BUS 2
-#define ONE_WIRE_PWR 3
-#define ONE_WIRE_GND 4
+
 
 // ************************************************
 // PID Variables and constants
@@ -149,22 +147,12 @@ DeviceAddress tempSensor;
 void setup()
 {
    Serial.begin(9600);
-   
+ 
 
    // Initialize Relay Control:
 
    pinMode(RelayPin, OUTPUT);    // Output mode to drive relay
    digitalWrite(RelayPin, LOW);  // make sure it is off to start
-
-   // Set up Ground & Power for the sensor from GPIO pins
-
-   pinMode(ONE_WIRE_GND, OUTPUT);
-   digitalWrite(ONE_WIRE_GND, LOW);
-
-   pinMode(ONE_WIRE_PWR, OUTPUT);
-   digitalWrite(ONE_WIRE_PWR, HIGH);
-
-
 
    // Initialize LCD DiSplay 
 
@@ -177,7 +165,7 @@ void setup()
    lcd.setCursor(0, 1);
    lcd.print(F("   by Jill Xu"));
 
-/**
+/***
    // Start up the DS18B20 One Wire Temperature Sensor
 
    sensors.begin();
@@ -206,8 +194,8 @@ void setup()
 
   //Timer1 Overflow Interrupt Enable
   TIMSK1 |= 1<<TOIE1;
-  
-*/  
+**/
+ 
 }
 
 // ************************************************
@@ -235,8 +223,8 @@ void loop()
   
    Serial.println("hello pid");
    delay(1000);
-   /**
    
+  /* 
    
    // wait for button release before changing state
    while(ReadButtons() != 0) {}
@@ -265,7 +253,7 @@ void loop()
       break;
    }
    
-*/   
+  */
 }
 
 // read the buttons
