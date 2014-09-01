@@ -6,7 +6,7 @@
 // Bill Earl - for Adafruit Industries
 //
 // Based on the Arduino PID and PID AutoTune Libraries 
-// by Brett Beauregard
+// by Brett Beauregarda
 //------------------------------------------------------------------
 
 // PID Library
@@ -89,12 +89,13 @@ LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 int lcd_key     = 0;
 int adc_key_in  = 0;
 
-#define BUTTON_RIGHT  0
+#define btnNONE   0
 #define BUTTON_UP     1
 #define BUTTON_DOWN   2
 #define BUTTON_LEFT   3
 #define BUTTON_SHIFT 4
-#define btnNONE   5
+#define BUTTON_RIGHT  5
+
 
 // These #defines make it easy to set the backlight color
 #define RED 0x1
@@ -212,17 +213,8 @@ void setup()
 
 ISR(TIMER1_COMPA_vect)          // timer compare interrupt service routine
 {
-  Serial.print("millis in timer1 int: ");
-  Serial.println(millis());
-}
-
-// ************************************************
-// Timer Interrupt Handler
-// ************************************************
-SIGNAL(TIMER1_OVF_vect) 
-{
-  Serial.println("hello int");
-  return;
+  //Serial.print("millis in timer1 int: ");
+  //Serial.println(millis());
   
   if (opState == OFF)
   {
@@ -267,7 +259,7 @@ void loop()
 {
    printStatus();
    
-  /* 
+  
    
    // wait for button release before changing state
    while(ReadButtons() != 0) {}
@@ -296,7 +288,7 @@ void loop()
       break;
    }
    
-  */
+  
 }
 
 // read the buttons
@@ -325,15 +317,17 @@ void Off()
    myPID.SetMode(MANUAL);
    //lcd.setBacklight(0);
    digitalWrite(RelayPin, LOW);  // make sure it is off
-   lcd.print(F("    Adafruit"));
+   lcd.print(F("    Water Bath"));
    lcd.setCursor(0, 1);
-   lcd.print(F("   Sous Vide!"));
+   lcd.print(F("off state"));
    uint8_t buttons = 0;
-   
+   Serial.println(buttons & (BUTTON_RIGHT));
    while(!(buttons & (BUTTON_RIGHT)))
    {
       buttons = ReadButtons();
    }
+   
+   Serial.println("here...");
    // Prepare to transition to the RUN state
    sensors.requestTemperatures(); // Start an asynchronous temperature reading
 
