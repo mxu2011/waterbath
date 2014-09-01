@@ -159,19 +159,21 @@ void setup()
    lcd.begin(16, 2);
    lcd.createChar(1, degree); // create degree symbol from the binary
    
+   lcd.clear();
    //lcd.setBacklight(VIOLET);
    lcd.setCursor(0, 0);
    lcd.print(F("   Water Bath"));
    lcd.setCursor(0, 1);
    lcd.print(F("   by Jill Xu"));
 
-/***
+
    // Start up the DS18B20 One Wire Temperature Sensor
 
    sensors.begin();
    if (!sensors.getAddress(tempSensor, 0)) 
    {
       lcd.setCursor(0, 1);
+      LcdClearLine(1);
       lcd.print(F("Sensor Error"));
    }
    sensors.setResolution(tempSensor, 12);
@@ -187,6 +189,8 @@ void setup()
 
    myPID.SetSampleTime(1000);
    myPID.SetOutputLimits(0, WindowSize);
+
+/**
 
   // Run timer1 interrupt every 15 ms 
   TCCR1A = 0;
@@ -213,6 +217,25 @@ SIGNAL(TIMER2_OVF_vect)
   }
 }
 
+void printStatus()
+{
+  char buf[32]; // needs to be at least large enough to fit the formatted text
+  
+  dtostrf(Setpoint, 2, 2, buf);
+  String parameters = String("Setpoint=")+String(buf) +" ";
+  
+  dtostrf(Kp, 2, 2, buf);
+  parameters += String("Kp=")+String(buf) +" ";
+  
+  dtostrf(Kd, 2, 2, buf);
+  parameters += String("Kd=")+String(buf) +" ";
+
+  dtostrf(Ki, 2, 2, buf);
+  parameters += String("Ki=")+String(buf);
+     
+  Serial.println(parameters);  
+}
+
 // ************************************************
 // Main Control Loop
 //
@@ -220,7 +243,7 @@ SIGNAL(TIMER2_OVF_vect)
 // ************************************************
 void loop()
 {
-  
+   printStatus();
    Serial.println("hello pid");
    delay(1000);
    
@@ -793,4 +816,11 @@ double EEPROM_readDouble(int address)
       *p++ = EEPROM.read(address++);
    }
    return value;
+}
+
+void LcdClearLine(int r)
+{
+  lcd.setCursor(0,r);
+  lcd.print("                ");
+  lcd.setCursor(0,r);
 }
