@@ -246,8 +246,14 @@ void printStatus()
   
   sensors.requestTemperatures();
   
-  Serial.print("The temperature is: ");
+  Serial.print("The temperature from sensor is: ");
   Serial.println(sensors.getTempCByIndex(0));
+  
+  Serial.print("Input and Output: ");
+  Serial.print(Input);
+  Serial.print(", ");
+  Serial.println(Output);
+  
 }
 
 // ************************************************
@@ -623,9 +629,14 @@ void Run()
       // periodically log to serial port in csv format
       if (millis() - lastLogTime > logInterval)  
       {
+        lastLogTime = millis();
+        
+        printStatus();
+        /**
         Serial.print(Input);
         Serial.print(",");
         Serial.println(Output);
+        **/
       }
 
       delay(100);
@@ -678,6 +689,7 @@ void DriveOutput()
   }
   else
   {
+    Serial.println("Shut off the heater");
      digitalWrite(RelayPin,LOW);
   }
 }
