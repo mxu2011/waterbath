@@ -1,6 +1,8 @@
 //-------------------------------------------------------------------
 //
-// Sous Vide Controller
+// Water Bath Controller
+//
+// Based oSous Vide Controller
 // Bill Earl - for Adafruit Industries
 //
 // Based on the Arduino PID and PID AutoTune Libraries 
@@ -13,8 +15,7 @@
 
 // Libraries for the Adafruit RGB/LCD Shield
 #include <Wire.h>
-#include <Adafruit_MCP23017.h>
-#include <Adafruit_RGBLCDShield.h>
+#include <LiquidCrystal.h>
 
 // Libraries for the DS18B20 Temperature Sensor
 #include <OneWire.h>
@@ -82,7 +83,21 @@ PID_ATune aTune(&Input, &Output);
 // DiSplay Variables and constants
 // ************************************************
 
-Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
+//Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
+// select the pins used on the LCD panel
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+
+// define some values used by the panel and buttons
+int lcd_key     = 0;
+int adc_key_in  = 0;
+
+#define BUTTON_RIGHT  0
+#define BUTTON_UP     1
+#define BUTTON_DOWN   2
+#define BUTTON_LEFT   3
+#define BUTTON_SHIFT 4
+#define btnNONE   5
+
 // These #defines make it easy to set the backlight color
 #define RED 0x1
 #define YELLOW 0x3
@@ -91,8 +106,6 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 #define BLUE 0x4
 #define VIOLET 0x5
 #define WHITE 0x7
-
-#define BUTTON_SHIFT BUTTON_SELECT
 
 unsigned long lastInput = 0; // last button press
 
@@ -158,10 +171,11 @@ void setup()
    lcd.begin(16, 2);
    lcd.createChar(1, degree); // create degree symbol from the binary
    
-   lcd.setBacklight(VIOLET);
-   lcd.print(F("    Adafruit"));
+   //lcd.setBacklight(VIOLET);
+   lcd.setCursor(0, 0);
+   lcd.print(F("   Water Bath"));
    lcd.setCursor(0, 1);
-   lcd.print(F("   Sous Vide!"));
+   lcd.print(F("   by Jill Xu"));
 
 /**
    // Start up the DS18B20 One Wire Temperature Sensor
@@ -254,13 +268,31 @@ void loop()
 */   
 }
 
+// read the buttons
+int read_LCD_buttons()
+{
+ adc_key_in = analogRead(0);      // read the value from the sensor 
+ // my buttons when read are centered at these valies: 0, 144, 329, 504, 741
+ // we add approx 50 to those values and check to see if we are close
+ if (adc_key_in > 1000) return btnNONE; // We make this the 1st option for speed reasons since it will be the most likely result
+ // For V1.1 us this threshold
+ if (adc_key_in < 50)   return BUTTON_RIGHT;  
+ if (adc_key_in < 250)  return BUTTON_UP; 
+ if (adc_key_in < 450)  return BUTTON_DOWN; 
+ if (adc_key_in < 650)  return BUTTON_LEFT; 
+ if (adc_key_in < 850)  return BUTTON_SHIFT;  
+ 
+ return btnNONE;  // when all others fail, return this...
+}
+
+
 // ************************************************
 // Initial State - press RIGHT to enter setpoint
 // ************************************************
 void Off()
 {
    myPID.SetMode(MANUAL);
-   lcd.setBacklight(0);
+   //lcd.setBacklight(0);
    digitalWrite(RelayPin, LOW);  // make sure it is off
    lcd.print(F("    Adafruit"));
    lcd.setCursor(0, 1);
@@ -289,7 +321,7 @@ void Off()
 // ************************************************
 void Tune_Sp()
 {
-   lcd.setBacklight(TEAL);
+   //lcd.setBacklight(TEAL);
    lcd.print(F("Set Temperature:"));
    uint8_t buttons = 0;
    while(true)
@@ -343,7 +375,7 @@ void Tune_Sp()
 // ************************************************
 void TuneP()
 {
-   lcd.setBacklight(TEAL);
+   //lcd.setBacklight(TEAL);
    lcd.print(F("Set Kp"));
 
    uint8_t buttons = 0;
@@ -397,7 +429,7 @@ void TuneP()
 // ************************************************
 void TuneI()
 {
-   lcd.setBacklight(TEAL);
+   //lcd.setBacklight(TEAL);
    lcd.print(F("Set Ki"));
 
    uint8_t buttons = 0;
@@ -451,7 +483,7 @@ void TuneI()
 // ************************************************
 void TuneD()
 {
-   lcd.setBacklight(TEAL);
+   //lcd.setBacklight(TEAL);
    lcd.print(F("Set Kd"));
 
    uint8_t buttons = 0;
@@ -629,19 +661,19 @@ void setBacklight()
 {
    if (tuning)
    {
-      lcd.setBacklight(VIOLET); // Tuning Mode
+      //lcd.setBacklight(VIOLET); // Tuning Mode
    }
    else if (abs(Input - Setpoint) > 1.0)  
    {
-      lcd.setBacklight(RED);  // High Alarm - off by more than 1 degree
+      //lcd.setBacklight(RED);  // High Alarm - off by more than 1 degree
    }
    else if (abs(Input - Setpoint) > 0.2)  
    {
-      lcd.setBacklight(YELLOW);  // Low Alarm - off by more than 0.2 degrees
+      //lcd.setBacklight(YELLOW);  // Low Alarm - off by more than 0.2 degrees
    }
    else
    {
-      lcd.setBacklight(WHITE);  // We're on target!
+      //lcd.setBacklight(WHITE);  // We're on target!
    }
 }
 
@@ -686,7 +718,8 @@ void FinishAutoTune()
 // ************************************************
 uint8_t ReadButtons()
 {
-  uint8_t buttons = lcd.readButtons();
+  //uint8_t buttons = lcd.readButtons();
+  uint8_t buttons = read_LCD_buttons();
   if (buttons != 0)
   {
     lastInput = millis();
