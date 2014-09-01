@@ -327,8 +327,8 @@ void Off()
    lcd.setCursor(0, 1);
    lcd.print(F("    off state"));
    uint8_t buttons = 0;
-   Serial.println(buttons & (BUTTON_RIGHT));
-   while(!(buttons & (BUTTON_RIGHT)))
+
+   while(buttons != BUTTON_RIGHT)
    {
       buttons = ReadButtons();
    }
@@ -424,26 +424,26 @@ void TuneP()
       buttons = ReadButtons();
 
       float increment = 1.0;
-      if (buttons & BUTTON_SHIFT)
+      if (buttons == BUTTON_SHIFT)
       {
         increment *= 10;
       }
-      if (buttons & BUTTON_LEFT)
+      if (buttons == BUTTON_LEFT)
       {
          opState = SETP;
          return;
       }
-      if (buttons & BUTTON_RIGHT)
+      if (buttons == BUTTON_RIGHT)
       {
          opState = TUNE_I;
          return;
       }
-      if (buttons & BUTTON_UP)
+      if (buttons == BUTTON_UP)
       {
          Kp += increment;
          delay(200);
       }
-      if (buttons & BUTTON_DOWN)
+      if (buttons == BUTTON_DOWN)
       {
          Kp -= increment;
          delay(200);
@@ -478,26 +478,26 @@ void TuneI()
       buttons = ReadButtons();
 
       float increment = 0.01;
-      if (buttons & BUTTON_SHIFT)
+      if (buttons == BUTTON_SHIFT)
       {
         increment *= 10;
       }
-      if (buttons & BUTTON_LEFT)
+      if (buttons == BUTTON_LEFT)
       {
          opState = TUNE_P;
          return;
       }
-      if (buttons & BUTTON_RIGHT)
+      if (buttons == BUTTON_RIGHT)
       {
          opState = TUNE_D;
          return;
       }
-      if (buttons & BUTTON_UP)
+      if (buttons == BUTTON_UP)
       {
          Ki += increment;
          delay(200);
       }
-      if (buttons & BUTTON_DOWN)
+      if (buttons == BUTTON_DOWN)
       {
          Ki -= increment;
          delay(200);
@@ -531,26 +531,26 @@ void TuneD()
    {
       buttons = ReadButtons();
       float increment = 0.01;
-      if (buttons & BUTTON_SHIFT)
+      if (buttons == BUTTON_SHIFT)
       {
         increment *= 10;
       }
-      if (buttons & BUTTON_LEFT)
+      if (buttons == BUTTON_LEFT)
       {
          opState = TUNE_I;
          return;
       }
-      if (buttons & BUTTON_RIGHT)
+      if (buttons == BUTTON_RIGHT)
       {
          opState = RUN;
          return;
       }
-      if (buttons & BUTTON_UP)
+      if (buttons == BUTTON_UP)
       {
          Kd += increment;
          delay(200);
       }
-      if (buttons & BUTTON_DOWN)
+      if (buttons == BUTTON_DOWN)
       {
          Kd -= increment;
          delay(200);
@@ -591,18 +591,18 @@ void Run()
       setBacklight();  // set backlight based on state
 
       buttons = ReadButtons();
-      if ((buttons & BUTTON_SHIFT) 
-         && (buttons & BUTTON_RIGHT) 
+      if ((buttons == BUTTON_SHIFT) 
+         && (buttons == BUTTON_RIGHT) 
          && (abs(Input - Setpoint) < 0.5))  // Should be at steady-state
       {
          StartAutoTune();
       }
-      else if (buttons & BUTTON_RIGHT)
+      else if (buttons == BUTTON_RIGHT)
       {
         opState = SETP;
         return;
       }
-      else if (buttons & BUTTON_LEFT)
+      else if (buttons == BUTTON_LEFT)
       {
         opState = OFF;
         return;
