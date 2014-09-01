@@ -245,7 +245,7 @@ void printStatus()
   Serial.println(parameters);  
   
   sensors.requestTemperatures();
-  delay(1000);
+  
   Serial.print("The temperature is: ");
   Serial.println(sensors.getTempCByIndex(0));
 }
@@ -257,7 +257,7 @@ void printStatus()
 // ************************************************
 void loop()
 {
-   printStatus();
+   //printStatus();
    
   
    
@@ -319,7 +319,7 @@ void Off()
    digitalWrite(RelayPin, LOW);  // make sure it is off
    lcd.print(F("    Water Bath"));
    lcd.setCursor(0, 1);
-   lcd.print(F("off state"));
+   lcd.print(F("    off state"));
    uint8_t buttons = 0;
    Serial.println(buttons & (BUTTON_RIGHT));
    while(!(buttons & (BUTTON_RIGHT)))
@@ -327,7 +327,9 @@ void Off()
       buttons = ReadButtons();
    }
    
-   Serial.println("here...");
+   Serial.println("Right button is pressed");
+   printStatus();
+   
    // Prepare to transition to the RUN state
    sensors.requestTemperatures(); // Start an asynchronous temperature reading
 
@@ -560,6 +562,7 @@ void TuneD()
 // ************************************************
 void Run()
 {
+   Serial.println("Entering Run state");
    // set up the LCD's number of rows and columns: 
    lcd.print(F("Sp: "));
    lcd.print(Setpoint);
