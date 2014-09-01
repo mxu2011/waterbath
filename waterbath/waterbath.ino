@@ -685,11 +685,12 @@ void DriveOutput()
   }
   if((onTime > 100) && (onTime > (now - windowStartTime)))
   {
+     //Serial.println("Turn on the heater");
      digitalWrite(RelayPin,HIGH);
   }
   else
   {
-    Serial.println("Shut off the heater");
+     Serial.println("Shut off the heater");
      digitalWrite(RelayPin,LOW);
   }
 }
